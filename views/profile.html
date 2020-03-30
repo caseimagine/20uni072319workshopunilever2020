@@ -8,90 +8,130 @@
 
 <p><span translate="Profile.MandatoryFields"></span></p>
 
-<form name="userForm" ng-submit="submitForm(userForm.$valid)" ng-if="titular">
-    <fieldset ng-repeat="atribuido in formulario.lists['Campos definidos'] | groupBy:'atribuicao'" ng-disabled="disableFields()">
+<form name="userForm" ng-submit="submitForm(userForm.$valid)" ng-if="titular && formSynchronized">
+    <fieldset ng-repeat="atribuido in formulario.lists['Campos definidos'] | groupBy:'atribuicao'"
+        ng-disabled="disableFields()">
 
         <h3>
             {{atribuido[0].atribuicao | translate}}
             <div class="togglebutton" ng-if="atribuido[0].atribuicao === 'Acompanhante'">
                 <label>
                     <span translate>Irá levar acompanhante</span>?
-                    <input type="checkbox" checked="" ng-model="titular.Wave" ng-false-value="0" ng-true-value="1">
+                    <input type="checkbox" checked="" ng-model="titular.Wave" ng-false-value="0" ng-true-value="1"
+                        ng-change="refreshMaterials()">
                 </label>
             </div>
         </h3>
 
-        <div class="form-group" ng-repeat="campo in atribuido" ng-if="(atribuido[0].atribuicao === 'Titular') || (titular.Wave === 0 && atribuido[0].atribuicao !== 'Acompanhante') || (titular.Wave === 1 && atribuido[0].atribuicao === 'Acompanhante')">
+        <div class="form-group" ng-repeat="campo in atribuido"
+            ng-if="((atribuido[0].atribuicao === 'Titular') || (titular.Wave === 0 && atribuido[0].atribuicao !== 'Acompanhante') || (titular.Wave === 1 && atribuido[0].atribuicao === 'Acompanhante'))  && $eval(campo.condicional)">
 
             <!-- label padrao para todos os campos -->
 
-            <label for="{{atribuido[0].atribuicao + campo.key}}">
+            <label for="{{atribuido[0].atribuicao + campo.key + $index}}">
                 <span>{{checkLabel(campo.label, campo.customLabel)}}</span>
                 <span ng-show="campo.obrigatorio">*</span>
                 <br>
                 <small> <em>{{campo.customPlaceholder | iif : campo.customPlaceholder : campo.placeholder}}</em></small>
+                <small ng-if="campo.descricaoLonga || campo.customDescricaoLonga"><br><strong>*
+                        {{checkLabel(campo.descricaoLonga, campo.customDescricaoLonga)}}</strong></small>
             </label>
 
             <!-- campos de texto / tel -->
 
-            <input ng-if="(campo.type === 'text' && campo.colmaSeparatedOptions === null ) || (campo.type === 'tel') || (campo.type === 'number')"
-                type="{{campo.type}}" id="{{atribuido[0].atribuicao + campo.key}}" name="{{atribuido[0].atribuicao + campo.key}}"
-                class="form-control" maxlength="{{campo.tamanhoMaximo}}" minlength="{{campo.tamanhoMinimo}}"
-                placeholder="" ui-mask="{{campo.mascara}}" ng-required="campo.obrigatorio" ng-model="campo.value">
+            <input
+                ng-if="((campo.type === 'text' && campo.colmaSeparatedOptions === null ) || (campo.type === 'tel') || (campo.type === 'number'))"
+                type="{{campo.type}}" id="{{atribuido[0].atribuicao + campo.key + $index}}"
+                name="{{atribuido[0].atribuicao + campo.key}}" class="form-control" maxlength="{{campo.tamanhoMaximo}}"
+                minlength="{{campo.tamanhoMinimo}}" placeholder="" ui-mask="{{campo.mascara}}"
+                ng-required="campo.obrigatorio" ng-model="campo.value" ng-change="refreshMaterials()">
+
+            <!-- campos de pergunta texto -->
+
+            <input ng-if="((campo.type === 'pergunta-text' && campo.colmaSeparatedOptions === null ) ) "
+                type="{{campo.type}}" id="{{atribuido[0].atribuicao + campo.key + $index}}"
+                name="{{atribuido[0].atribuicao + campo.key}}" class="form-control" maxlength="{{campo.tamanhoMaximo}}"
+                minlength="{{campo.tamanhoMinimo}}" placeholder="" ui-mask="{{campo.mascara}}"
+                ng-required="campo.obrigatorio" ng-model="campo.textValue" ng-change="refreshMaterials()">
+
+            <!-- campos de pergunta radio inline -->
+
+            <div class="radio" ng-if="(campo.type === 'pergunta-radio') || (campo.type === 'pergunta-radio-inline') "
+                ng-repeat="option in campo.options">
+                <label>
+                    <input type="radio" id="{{atribuido[0].atribuicao + campo.key + $index}}"
+                        name="" ng-model="campo.optionsValue[0]" ng-value="option.value"
+                        ng-required="campo.obrigatorio" ng-change="refreshMaterials()"> {{option.name}}</label>
+            </div>
+
+            <!-- campos de pergunta radio inline caso use a opção "Outro" -->
+
+            <label for="{{atribuido[0].atribuicao + campo.key + $index}}Outro" ng-if="(campo.optionsValue[0] === campo.optionsOtherId) && campo.options.length > 0 &&  campo.optionsOtherId > 0">
+                <span><small translate>Qual?</small>*</span>
+            </label>
+
+            <input ng-if="(campo.optionsValue[0] === campo.optionsOtherId) && campo.options.length > 0 &&  campo.optionsOtherId > 0"
+                type="text" id="{{atribuido[0].atribuicao + campo.key + $index}}Outro"
+                name="{{atribuido[0].atribuicao + campo.key + $index}}Outro" class="form-control" maxlength="100"
+                placeholder="" ui-mask="{{campo.mascara}}"
+                ng-required="true" ng-model="campo.textValue" ng-change="refreshMaterials()">
 
             <!-- email (lowercase) -->
 
-            <input ng-if="(campo.type === 'email')"
-            type="{{campo.type}}" id="{{atribuido[0].atribuicao + campo.key}}" name="{{atribuido[0].atribuicao + campo.key}}"
-            class="form-control" maxlength="{{campo.tamanhoMaximo}}" minlength="{{campo.tamanhoMinimo}}"
-            placeholder="" ui-mask="{{campo.mascara}}" ng-required="campo.obrigatorio" ng-model="campo.value"  ng-keyup="campo.value = campo.value.toLowerCase();">
+            <input ng-if="(campo.type === 'email')" type="{{campo.type}}" id="{{atribuido[0].atribuicao + campo.key + $index}}"
+                name="{{atribuido[0].atribuicao + campo.key}}" class="form-control" maxlength="{{campo.tamanhoMaximo}}"
+                minlength="{{campo.tamanhoMinimo}}" placeholder="" ui-mask="{{campo.mascara}}"
+                ng-required="campo.obrigatorio" ng-model="campo.value"
+                ng-keyup="campo.value = campo.value.toLowerCase();" ng-change="refreshMaterials()">
 
             <!-- campos de select -->
 
             <select ng-if="(campo.type === 'select') || (campo.type === 'text' && campo.colmaSeparatedOptions !== null)"
-                class="form-control" name="{{atribuido[0].atribuicao + campo.key}}" id="{{atribuido[0].atribuicao + campo.key}}"
-                ng-model="campo.value" ng-options="option.value as option.name for option in campo.options" ng-required="campo.obrigatorio">
+                class="form-control" name="{{atribuido[0].atribuicao + campo.key}}"
+                id="{{atribuido[0].atribuicao + campo.key + $index}}" ng-model="campo.value"
+                ng-options="option.value as option.name for option in campo.options" ng-required="campo.obrigatorio"
+                ng-change="refreshMaterials()">
             </select>
 
             <!-- campos de radio -->
             <!-- campos de radio inline -->
 
-            <div class="radio" ng-if="(campo.type === 'radio') || (campo.type === 'radio-inline') " ng-repeat="option in campo.options">
+            <div class="radio" ng-if="(campo.type === 'radio') || (campo.type === 'radio-inline') "
+                ng-repeat="option in campo.options">
                 <label>
-                    <input type="radio" id="{{atribuido[0].atribuicao + campo.key}}" name="{{atribuido[0].atribuicao + campo.key}}"
-                        ng-model="campo.value" ng-value="option.value" ng-required="campo.obrigatorio"> {{option.name}}</label>
+                    <input type="radio" id="{{atribuido[0].atribuicao + campo.key + $index}}"
+                        name="{{atribuido[0].atribuicao + campo.key}}" ng-model="campo.value" ng-value="option.value"
+                        ng-required="campo.obrigatorio" ng-change="refreshMaterials()"> {{option.name}}</label>
             </div>
 
             <!-- campos de booleano -->
 
             <div class="radio" ng-if="(campo.type === 'boolean')">
                 <label>
-                    <input type="radio" id="{{atribuido[0].atribuicao + campo.key}}" name="{{atribuido[0].atribuicao + campo.key}}"
-                        ng-model="campo.value" ng-value="false" ng-required="campo.obrigatorio"> {{'Não' | translate}}
+                    <input type="radio" id="{{atribuido[0].atribuicao + campo.key + $index}}"
+                        name="{{atribuido[0].atribuicao + campo.key}}" ng-model="campo.value" ng-value="false"
+                        ng-required="campo.obrigatorio" ng-change="refreshMaterials()"> {{'Não' | translate}}
                 </label>
             </div>
 
             <div class="radio" ng-if="(campo.type === 'boolean')">
                 <label>
-                    <input type="radio" id="{{atribuido[0].atribuicao + campo.key}}" name="{{atribuido[0].atribuicao + campo.key}}"
-                        ng-model="campo.value" ng-value="true" ng-required="campo.obrigatorio"> {{'Sim' | translate}}
+                    <input type="radio" id="{{atribuido[0].atribuicao + campo.key + $index}}"
+                        name="{{atribuido[0].atribuicao + campo.key}}" ng-model="campo.value" ng-value="true"
+                        ng-required="campo.obrigatorio" ng-change="refreshMaterials()"> {{'Sim' | translate}}
                 </label>
             </div>
 
             <!-- campo de data em uma string -->
 
             <div class="input-group" ng-if="(campo.type === 'date-string')">
-                <input 
-                    type="text" 
-                    class="form-control" 
-                    name="{{atribuido[0].atribuicao + campo.key}}"
-                    id="{{atribuido[0].atribuicao + campo.key}}"
-                    ng-model="campo.value" 
+
+                <input type="text" class="form-control" name="{{atribuido[0].atribuicao + campo.key}}"
+                    id="{{atribuido[0].atribuicao + campo.key + $index}}" ng-model="campo.value"
                     uib-datepicker-popup="d!/M!/yyyy"
-                    ng-required="campo.obrigatorio" 
-                    is-open="campo.opened"  
-                    show-button-bar="false"
-                />
+                    datepicker-options="{maxDate:campo.dataMaxima, minDate:campo.dataMinima}"
+                    ng-required="campo.obrigatorio" is-open="campo.opened" show-button-bar="false"
+                    ng-change="refreshMaterials()" />
                 <span class="input-group-btn">
                     <button type="button" class="btn btn-default" ng-click="abreCalendario(campo)"><i
                             class="glyphicon glyphicon-calendar"></i></button>
@@ -103,19 +143,21 @@
 
         </div>
     </fieldset>
-    <div ng-if="userForm.$error.required || userForm.$error.parse || userForm.$error.mask || userForm.$error.email" class="alert alert-danger">
+    <div ng-if="userForm.$error.required || userForm.$error.parse || userForm.$error.mask || userForm.$error.email"
+        class="alert alert-danger">
         <div class="alert-icon">
             <i class="material-icons">error_outline</i>
         </div>
-        Para prosseguir preencha o(s) campo(s) 
+        Para prosseguir preencha o(s) campo(s)
         <ul>
-            <li ng-repeat="erros in userForm track by erros.$name" ng-if="erros.$error | objLength"><span translate="{{erros.$name | inputErrorLabel}}"></span></li>
+            <li ng-repeat="erros in userForm track by erros.$name" ng-if="erros.$error | objLength"><span
+                    translate="{{erros.$name | inputErrorLabel}}"></span></li>
         </ul>
         <br>
         Campos com erro se encontram marcados com um X
     </div>
-    <button type="submit" class="btn btn-primary" ng-disabled="submitting || userForm.$invalid" ng-show="canSubmit()"><span
-            translate>Enviar</span></button>
+    <button type="submit" class="btn btn-primary" ng-disabled="submitting || userForm.$invalid"
+        ng-show="canSubmit()"><span translate>Enviar</span></button>
 </form>
 
 <br>
