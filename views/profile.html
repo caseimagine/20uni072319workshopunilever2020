@@ -24,7 +24,7 @@
         </h3>
 
         <div class="form-group" ng-repeat="campo in atribuido"
-            ng-if="((atribuido[0].atribuicao === 'Titular') || (titular.Wave === 0 && atribuido[0].atribuicao !== 'Acompanhante') || (titular.Wave === 1 && atribuido[0].atribuicao === 'Acompanhante'))  && $eval(campo.condicional)">
+            ng-if="((atribuido[0].atribuicao === 'Titular') || (titular.Wave === 0 && atribuido[0].atribuicao !== 'Acompanhante') || (titular.Wave === 1 && atribuido[0].atribuicao === 'Acompanhante')) ">
 
             <!-- label padrao para todos os campos -->
 
