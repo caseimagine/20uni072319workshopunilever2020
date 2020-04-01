@@ -16,7 +16,7 @@
 
         <div class="collapse navbar-collapse" id="menuprincipal">
             <ul class="nav navbar-nav navbar-right">
-                <li>
+                <!-- <li>
                     <a href="#!/conteudo">Conteúdo</a>
                 </li>
                 <li>
@@ -24,7 +24,7 @@
                 </li>
                 <li>
                     <a href="#!/voo">Voo</a>
-                </li>
+                </li> -->
                 <li>
                     <a href="#!/upload">Documentos</a>
                 </li>
@@ -41,16 +41,14 @@
     </div>
 </nav>
 
-<div class="page-header clear-filter purple-filter " style="position: relative; overflow: hidden; background-image: url('images/cover.b6fc6e61.jpg'); background-size: cover;
-background-position: center bottom;">
-    <div class="" style="" data-rellax-speed="-1" data-rellax-percentage="0">
-        <div class="container">
-            <div class="row">
-                <div class="col-sm-4 col-sm-offset-4">
-                    <img class="img-responsive page-header-logo" src="images/logo-campanha.c2f9278a.png" alt="{{appTitle}}" />
-                </div>
+<div class="page-header clear-filter purple-filter " style="position: relative; overflow: hidden; ">
+    <div class="container">
+        <div class="row visible-xs visible-sm">
+            <div class="col-sm-4 col-sm-offset-4">
+                <img class="img-responsive page-header-logo" src="images/logo-campanha.e3687e70.png" alt="{{appTitle}}" />
             </div>
         </div>
+        <img class="img-responsive hidden-xs hidden-sm" src="images/cover-interna.bd976fbf.jpg" alt="{{appTitle}}" />
     </div>
 </div>
 <div class="container">
@@ -71,13 +69,15 @@ background-position: center bottom;">
 <div class="footer">
     <div ng-include="'/views/footer.html'"></div>
     <div class="container">
-        <div class="language-select text-center" ng-controller="LanguageselectCtrl" ng-if="Utils.keys(grupo.multilingua.linguas).length > 1">
+        <div class="language-select text-center" ng-controller="LanguageselectCtrl"
+            ng-if="Utils.keys(grupo.multilingua.linguas).length > 1">
 
             <ul class="list-inline" style="margin-bottom: 0;">
                 <li><span class="glyphicon glyphicon-globe" aria-hidden="true"></span></li>
                 <li ng-repeat="(key, value) in localesNamesWithKeys">
                     <small>
-                        <a href="" ng-click="changeLanguage(key)" ng-class="key === currentLocaleDisplayName ? 'text-underline' : ''">
+                        <a href="" ng-click="changeLanguage(key)"
+                            ng-class="key === currentLocaleDisplayName ? 'text-underline' : ''">
                             <span></span> {{value}}</a>
                     </small>
                 </li>
