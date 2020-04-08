@@ -25,11 +25,13 @@
                 <li>
                     <a href="#!/voo">Voo</a>
                 </li> -->
-                <li>
-                    <a href="#!/upload">Documentos</a>
-                </li>
-                <li>
-                    <a href="#!/profile">{{'Menu.Inscricao' | translate}}</a>
+                <li class="dropdown">
+                    <a  class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                        aria-expanded="false">Inscrição <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#!/profile">Ficha</a></li>
+                        <li><a href="#!/upload">Documentos</a></li>
+                    </ul>
                 </li>
                 <li>
                     <a href="" ng-click="logout()">
