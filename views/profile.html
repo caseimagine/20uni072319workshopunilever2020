@@ -8,7 +8,7 @@
 
 <p><span translate="Profile.MandatoryFields"></span></p>
 
-<div class="" ng-if="!cpfValido">
+<div class="" ng-if="!cpfValido && titular.Cpf.length > 0">
     <br>
     <br>
     <h3 class="text-center">Digite seu CPF para acessar sua ficha</h3>
@@ -19,7 +19,7 @@
     </div>
 </div>
 
-<form name="userForm" ng-submit="submitForm(userForm.$valid)" ng-if="titular && formSynchronized && cpfValido">
+<form name="userForm" ng-submit="submitForm(userForm.$valid)" ng-if="titular && formSynchronized && (cpfValido ||  titular.Cpf.length === 0)">
     <fieldset ng-repeat="atribuido in formulario.lists['Campos definidos'] | groupBy:'atribuicao'"
         ng-disabled="disableFields()">
 
