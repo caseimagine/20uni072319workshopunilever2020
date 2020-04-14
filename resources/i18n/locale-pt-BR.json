@@ -168,7 +168,7 @@
     "Nome do contato de emergência": "Nome do contato de emergência",
     "Telefone do contato de emergência": "Telefone do contato de emergência",
     "Celular do contato de emergência": "Celular do contato de emergência",
-    "Em caso de dúvidas entre em contato com": "Em caso de dúvidas, entre em contato <u><a href='mailto:{{footeremail}}'>conosco</a></u> pelo telefone {{footertelefone}}",
+    "Em caso de dúvidas entre em contato com": "Em caso de dúvidas, entre em contato por e-mail <u><a href='mailto:{{footeremail}}'>{{footeremail}}</a></u> ou pelo telefone {{footertelefone}}",
     "Insira seu e-mail": "Insira seu e-mail",
     "Insira um e-mail válido": "Insira um e-mail válido",
 
