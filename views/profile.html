@@ -4,6 +4,8 @@
     <span translate>seja bem-vindo(a)!</span>
 </p>
 
+<p><strong>Se você já fez sua inscrição, confira se seus dados estão corretos e clique em enviar para confirmar a nova data. Se ainda não fez, preencha seus dados.</strong></p>
+
 <p>O prazo limite é dia {{grupo.deadlineInscricao}}.</p>
 
 <p><span translate="Profile.MandatoryFields"></span></p>
@@ -170,7 +172,7 @@
         Campos com erro se encontram marcados com um X
     </div>
     <button type="submit" class="btn btn-primary" ng-disabled="submitting || userForm.$invalid"
-        ng-show="canSubmit()"><span translate>Enviar</span></button>
+        ng-show="canSubmit()"><span ng-if="titular.Status ===-2">Confirmo meus dados para nova data</span><span ng-if="titular.Status !== -2">Enviar</span></button>
 </form>
 
 <br>
